@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Redline",
+    "slug": "redline",
+    "scheme": "redline",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "plugins": ["expo-router"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.orisabiyi.redline"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.orisabiyi.redline"
+    }
+  }
+}
