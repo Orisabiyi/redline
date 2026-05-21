@@ -32,8 +32,8 @@ export const useGarage = create<GarageStore>()(
             : [...s.savedCars, slug],
         })),
       removeCar: (slug) =>
-        set((s) => ({
-          savedCars: s.savedCars.filter((s) => s !== slug),
+        set((saved) => ({
+          savedCars: saved.savedCars.filter((car) => car !== slug),
         })),
       isSaved: (slug) => get().savedCars.includes(slug),
       createCollection: (name) =>
