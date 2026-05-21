@@ -1,17 +1,20 @@
 {
   "name": "redline",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:mobile": "cd apps/mobile && npx expo start",
+    "dev:server": "cd apps/server && pnpm dev",
+    "dev:web": "cd apps/web && pnpm dev",
+    "dev": "concurrently \"pnpm dev:server\" \"pnpm dev:web\"",
+    "seed": "cd apps/server && pnpm db:seed"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.6.5"
+  "packageManager": "pnpm@10.6.5",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }
