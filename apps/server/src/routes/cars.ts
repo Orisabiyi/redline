@@ -1,6 +1,6 @@
 // src/routes/cars.ts
 import { Hono } from "hono";
-import { prisma } from "../lib/db.js";
+import { prisma } from "../lib/db";
 
 const app = new Hono();
 

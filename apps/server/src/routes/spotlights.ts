@@ -1,14 +1,14 @@
 import { Hono } from "hono";
-import { prisma } from "../lib/db.js";
+import { prisma } from "../lib/db";
 
 const app = new Hono();
 
-app.get("/", async (c) => {
-  return c.json([]);
+app.get("/", async (context) => {
+  return context.json([]);
 });
 
-app.get("/:id", async (c) => {
-  return c.json({ error: "Not found" }, 404);
+app.get("/:id", async (context) => {
+  return context.json({ error: "Not found" }, 404);
 });
 
 export { app as spotlightRoutes };
