@@ -1,7 +1,7 @@
 import { Hono } from "hono";
-import { prisma } from "../lib/db";
+import type { Bindings, Variables } from "..";
 
-const app = new Hono();
+const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 app.get("/", async (context) => {
   return context.json([]);

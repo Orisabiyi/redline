@@ -1,20 +1,22 @@
 // src/routes/cars.ts
 import { Hono } from "hono";
-import { prisma } from "../lib/db";
+import { getDb } from "../lib/db";
 import { Category } from "../../generated/prisma/enums";
+import { Bindings, Variables } from "..";
 
-const app = new Hono();
+const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-// List cars
+// get all cars
 app.get("/", async (context) => {
-  console.log("Fetching cars with query:", context.req.query());
   try {
+    const prisma = getDb(context.env.DATABASE_URL);
     const { category, page = "1", limit = "20" } = context.req.query();
 
     const where =
       category && Object.values(Category).includes(category as Category)
         ? { category: category as Category }
         : {};
+
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const [cars, total] = await Promise.all([
@@ -30,14 +32,15 @@ app.get("/", async (context) => {
 
     return context.json({ cars, total, page: parseInt(page), limit: parseInt(limit) });
   } catch (err) {
-    console.error("Full error:", err);
     return context.json({ error: "Failed to fetch cars" }, 500);
   }
 });
 
-// Featured
+// get featured cars for homepage
 app.get("/featured", async (context) => {
   try {
+    const prisma = getDb(context.env.DATABASE_URL);
+
     const [jdm, supercar, classic] = await Promise.all([
       prisma.car.findMany({ where: { category: "JDM" }, include: { images: true }, take: 3 }),
       prisma.car.findMany({ where: { category: "SUPERCAR" }, include: { images: true }, take: 3 }),
@@ -52,16 +55,17 @@ app.get("/featured", async (context) => {
 // Search
 app.get("/search", async (context) => {
   try {
-    const q = context.req.query("q");
-    if (!q) return context.json([]);
+    const prisma = getDb(context.env.DATABASE_URL);
+    const query = context.req.query("q");
+    if (!query) return context.json([]);
 
     const cars = await prisma.car.findMany({
       where: {
         OR: [
-          { name: { contains: q, mode: "insensitive" } },
-          { make: { contains: q, mode: "insensitive" } },
-          { model: { contains: q, mode: "insensitive" } },
-          { tags: { has: q.toLowerCase() } },
+          { name: { contains: query, mode: "insensitive" } },
+          { make: { contains: query, mode: "insensitive" } },
+          { model: { contains: query, mode: "insensitive" } },
+          { tags: { has: query.toLowerCase() } },
         ],
       },
       include: { images: { where: { isPrimary: true }, take: 1 } },
@@ -75,8 +79,8 @@ app.get("/search", async (context) => {
 
 // Single car
 app.get("/:slug", async (context) => {
-  console.log("Fetching car with slug:", context.req.param("slug"));
   try {
+    const prisma = getDb(context.env.DATABASE_URL);
     const car = await prisma.car.findUnique({
       where: { slug: context.req.param("slug") },
       include: {

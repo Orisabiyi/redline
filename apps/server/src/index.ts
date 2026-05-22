@@ -5,7 +5,17 @@ import { prettyJSON } from "hono/pretty-json";
 import { carRoutes } from "./routes/cars";
 import { spotlightRoutes } from "./routes/spotlights";
 
-const app = new Hono().basePath("/api/v1");
+export type Bindings = {
+  DATABASE_URL: string;
+  DIRECT_DATABASE_URL: string;
+  NODE_ENV: string;
+};
+
+export type Variables = {
+  db: ReturnType<typeof import("./lib/db.js").getDb>;
+};
+
+const app = new Hono<{ Bindings: Bindings; Variables: Variables }>().basePath("/api/v1");
 
 // Middleware
 app.use("*", prettyJSON({ space: 2 }));
