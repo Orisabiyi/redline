@@ -7,6 +7,7 @@ const app = new Hono();
 
 // List cars
 app.get("/", async (context) => {
+  console.log("Fetching cars with query:", context.req.query());
   try {
     const { category, page = "1", limit = "20" } = context.req.query();
 
@@ -29,29 +30,30 @@ app.get("/", async (context) => {
 
     return context.json({ cars, total, page: parseInt(page), limit: parseInt(limit) });
   } catch (err) {
+    console.error("Full error:", err);
     return context.json({ error: "Failed to fetch cars" }, 500);
   }
 });
 
 // Featured
-app.get("/featured", async (c) => {
+app.get("/featured", async (context) => {
   try {
     const [jdm, supercar, classic] = await Promise.all([
       prisma.car.findMany({ where: { category: "JDM" }, include: { images: true }, take: 3 }),
       prisma.car.findMany({ where: { category: "SUPERCAR" }, include: { images: true }, take: 3 }),
       prisma.car.findMany({ where: { category: "CLASSIC" }, include: { images: true }, take: 3 }),
     ]);
-    return c.json([...jdm, ...supercar, ...classic]);
+    return context.json([...jdm, ...supercar, ...classic]);
   } catch (err) {
-    return c.json({ error: "Failed to fetch featured cars" }, 500);
+    return context.json({ error: "Failed to fetch featured cars" }, 500);
   }
 });
 
 // Search
-app.get("/search", async (c) => {
+app.get("/search", async (context) => {
   try {
-    const q = c.req.query("q");
-    if (!q) return c.json([]);
+    const q = context.req.query("q");
+    if (!q) return context.json([]);
 
     const cars = await prisma.car.findMany({
       where: {
@@ -65,27 +67,28 @@ app.get("/search", async (c) => {
       include: { images: { where: { isPrimary: true }, take: 1 } },
       take: 20,
     });
-    return c.json(cars);
+    return context.json(cars);
   } catch (err) {
-    return c.json({ error: "Search failed" }, 500);
+    return context.json({ error: "Search failed" }, 500);
   }
 });
 
 // Single car
-app.get("/:slug", async (c) => {
+app.get("/:slug", async (context) => {
+  console.log("Fetching car with slug:", context.req.param("slug"));
   try {
     const car = await prisma.car.findUnique({
-      where: { slug: c.req.param("slug") },
+      where: { slug: context.req.param("slug") },
       include: {
         images: { orderBy: { isPrimary: "desc" } },
         variants: true,
       },
     });
 
-    if (!car) return c.json({ error: "Car not found" }, 404);
-    return c.json(car);
+    if (!car) return context.json({ error: "Car not found" }, 404);
+    return context.json(car);
   } catch (err) {
-    return c.json({ error: "Failed to fetch car" }, 500);
+    return context.json({ error: "Failed to fetch car" }, 500);
   }
 });
 

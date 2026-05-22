@@ -8,7 +8,7 @@ import { spotlightRoutes } from "./routes/spotlights";
 const app = new Hono().basePath("/api/v1");
 
 // Middleware
-app.use("*", prettyJSON());
+app.use("*", prettyJSON({ space: 2 }));
 app.use("*", logger());
 app.use(
   "*",
