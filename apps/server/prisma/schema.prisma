@@ -68,3 +68,10 @@ enum Category {
   SUPERCAR
   CLASSIC
 }
+
+model Waitlist {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String?
+  createdAt DateTime @default(now())
+}
