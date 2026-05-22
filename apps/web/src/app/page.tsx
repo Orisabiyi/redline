@@ -1,7 +1,8 @@
 import SmoothScroll from "@/components/SmoothScroll";
 import Hero from "@/components/Hero";
-import Features from "@/components/Features";
+import CategoryReveal from "@/components/CategoryReveal";
 import CarShowcase from "@/components/CarShowcase";
+import StatsFeatures from "@/components/StatsFeatures";
 import Waitlist from "@/components/Waitlist";
 import Footer from "@/components/Footer";
 
@@ -10,8 +11,9 @@ export default function Home() {
     <SmoothScroll>
       <main>
         <Hero />
-        <Features />
+        <CategoryReveal />
         <CarShowcase />
+        <StatsFeatures />
         <Waitlist />
         <Footer />
       </main>
