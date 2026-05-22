@@ -1,98 +1,91 @@
-// src/routes/cars.ts
 import { Hono } from "hono";
-import { getDb } from "../lib/db";
-import { Category } from "../../generated/prisma/enums";
-import { Bindings, Variables } from "..";
+import { eq, ilike, or, sql, count } from "drizzle-orm";
+import { getDb } from "../lib/db.js";
+import { cars, images, variants } from "../db/schema.js";
+import type { Bindings, Variables } from "../index.js";
 
 const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-// get all cars
-app.get("/", async (context) => {
+app.get("/", async (c) => {
   try {
-    const prisma = getDb(context.env.DATABASE_URL);
-    const { category, page = "1", limit = "20" } = context.req.query();
+    const db = getDb(c.env.DATABASE_URL);
+    const { category, page = "1", limit = "20" } = c.req.query();
+    const offset = (parseInt(page) - 1) * parseInt(limit);
 
-    const where =
-      category && Object.values(Category).includes(category as Category)
-        ? { category: category as Category }
-        : {};
+    const where = category ? eq(cars.category, category as any) : undefined;
 
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-
-    const [cars, total] = await Promise.all([
-      prisma.car.findMany({
-        where,
-        include: { images: { where: { isPrimary: true }, take: 1 } },
-        skip,
-        take: parseInt(limit),
-        orderBy: { name: "asc" },
-      }),
-      prisma.car.count({ where }),
+    const [carList, totalResult] = await Promise.all([
+      db.select().from(cars).where(where).orderBy(cars.name).limit(parseInt(limit)).offset(offset),
+      db.select({ count: count() }).from(cars).where(where),
     ]);
 
-    return context.json({ cars, total, page: parseInt(page), limit: parseInt(limit) });
+    return c.json({
+      cars: carList,
+      total: totalResult[0].count,
+      page: parseInt(page),
+      limit: parseInt(limit),
+    });
   } catch (err) {
-    return context.json({ error: "Failed to fetch cars" }, 500);
+    console.error("Error:", err);
+    return c.json({ error: "Failed to fetch cars" }, 500);
   }
 });
 
-// get featured cars for homepage
-app.get("/featured", async (context) => {
+app.get("/featured", async (c) => {
   try {
-    const prisma = getDb(context.env.DATABASE_URL);
+    const db = getDb(c.env.DATABASE_URL);
+    const featured = await db.select().from(cars).orderBy(sql`random()`).limit(9);
+    return c.json(featured);
+  } catch (err) {
+    console.error("Error:", err);
+    return c.json({ error: "Failed to fetch featured" }, 500);
+  }
+});
 
-    const [jdm, supercar, classic] = await Promise.all([
-      prisma.car.findMany({ where: { category: "JDM" }, include: { images: true }, take: 3 }),
-      prisma.car.findMany({ where: { category: "SUPERCAR" }, include: { images: true }, take: 3 }),
-      prisma.car.findMany({ where: { category: "CLASSIC" }, include: { images: true }, take: 3 }),
+app.get("/search", async (c) => {
+  try {
+    const db = getDb(c.env.DATABASE_URL);
+    const q = c.req.query("q");
+    if (!q) return c.json([]);
+
+    const searchTerm = `%${q}%`;
+    const results = await db
+      .select()
+      .from(cars)
+      .where(
+        or(
+          ilike(cars.name, searchTerm),
+          ilike(cars.make, searchTerm),
+          ilike(cars.model, searchTerm)
+        )
+      )
+      .limit(20);
+
+    return c.json(results);
+  } catch (err) {
+    console.error("Error:", err);
+    return c.json({ error: "Search failed" }, 500);
+  }
+});
+
+app.get("/:slug", async (c) => {
+  try {
+    const db = getDb(c.env.DATABASE_URL);
+    const slug = c.req.param("slug");
+
+    const carResult = await db.select().from(cars).where(eq(cars.slug, slug));
+    if (carResult.length === 0) return c.json({ error: "Car not found" }, 404);
+
+    const car = carResult[0];
+    const [carImages, carVariants] = await Promise.all([
+      db.select().from(images).where(eq(images.carId, car.id)),
+      db.select().from(variants).where(eq(variants.carId, car.id)),
     ]);
-    return context.json([...jdm, ...supercar, ...classic]);
+
+    return c.json({ ...car, images: carImages, variants: carVariants });
   } catch (err) {
-    return context.json({ error: "Failed to fetch featured cars" }, 500);
-  }
-});
-
-// Search
-app.get("/search", async (context) => {
-  try {
-    const prisma = getDb(context.env.DATABASE_URL);
-    const query = context.req.query("q");
-    if (!query) return context.json([]);
-
-    const cars = await prisma.car.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { make: { contains: query, mode: "insensitive" } },
-          { model: { contains: query, mode: "insensitive" } },
-          { tags: { has: query.toLowerCase() } },
-        ],
-      },
-      include: { images: { where: { isPrimary: true }, take: 1 } },
-      take: 20,
-    });
-    return context.json(cars);
-  } catch (err) {
-    return context.json({ error: "Search failed" }, 500);
-  }
-});
-
-// Single car
-app.get("/:slug", async (context) => {
-  try {
-    const prisma = getDb(context.env.DATABASE_URL);
-    const car = await prisma.car.findUnique({
-      where: { slug: context.req.param("slug") },
-      include: {
-        images: { orderBy: { isPrimary: "desc" } },
-        variants: true,
-      },
-    });
-
-    if (!car) return context.json({ error: "Car not found" }, 404);
-    return context.json(car);
-  } catch (err) {
-    return context.json({ error: "Failed to fetch car" }, 500);
+    console.error("Error:", err);
+    return c.json({ error: "Failed to fetch car" }, 500);
   }
 });
 
