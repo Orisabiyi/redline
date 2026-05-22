@@ -5,9 +5,9 @@ import { prisma } from "../lib/db.js";
 const app = new Hono();
 
 // List cars
-app.get("/", async (c) => {
+app.get("/", async (context) => {
   try {
-    const { category, page = "1", limit = "20" } = c.req.query();
+    const { category, page = "1", limit = "20" } = context.req.query();
 
     const where = category ? { category } : {};
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -23,9 +23,9 @@ app.get("/", async (c) => {
       prisma.car.count({ where }),
     ]);
 
-    return c.json({ cars, total, page: parseInt(page), limit: parseInt(limit) });
+    return context.json({ cars, total, page: parseInt(page), limit: parseInt(limit) });
   } catch (err) {
-    return c.json({ error: "Failed to fetch cars" }, 500);
+    return context.json({ error: "Failed to fetch cars" }, 500);
   }
 });
 
