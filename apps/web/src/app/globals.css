@@ -1,51 +1,256 @@
-@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --red: #e63946;
+  --red-dark: #c1303b;
+  --red-glow: rgba(230, 57, 70, 0.15);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: auto;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #000;
+  color: #fff;
+  overflow-x: hidden;
+  font-family: "Plus Jakarta Sans", sans-serif;
 }
 
 ::selection {
-  background: #e63946;
+  background: var(--red);
   color: #fff;
 }
 
-.text-gradient {
-  background: linear-gradient(135deg, #fff 0%, #999 100%);
+/* ============================================
+   FILM GRAIN OVERLAY
+   ============================================ */
+.film-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  mix-blend-mode: overlay;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+.font-display {
+  font-family: "Bebas Neue", sans-serif;
+}
+
+.font-body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* ============================================
+   TEXT EFFECTS
+   ============================================ */
+.text-gradient-white {
+  background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.5) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .text-gradient-red {
-  background: linear-gradient(135deg, #e63946 0%, #ff6b6b 100%);
+  background: linear-gradient(135deg, #e63946 0%, #ff6b6b 50%, #e63946 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.glow-red {
+/* ============================================
+   TACHOMETER ARC
+   ============================================ */
+.tach-arc {
+  stroke-dasharray: 800;
+  stroke-dashoffset: 800;
+}
+
+.tach-arc.animate {
+  animation: tachSweep 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes tachSweep {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ============================================
+   REDLINE SWEEP
+   ============================================ */
+.redline-sweep {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* ============================================
+   SPEED LINES BACKGROUND
+   ============================================ */
+.speed-lines {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.03;
+}
+
+.speed-lines::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 40px,
+    rgba(255, 255, 255, 0.5) 40px,
+    rgba(255, 255, 255, 0.5) 41px
+  );
+  animation: speedScroll 3s linear infinite;
+}
+
+@keyframes speedScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ============================================
+   HORIZONTAL SCROLL SECTION
+   ============================================ */
+.car-card {
+  transition:
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.car-card:hover {
+  transform: translateY(-8px) scale(1.02);
   box-shadow:
-    0 0 60px rgba(230, 57, 70, 0.3),
-    0 0 120px rgba(230, 57, 70, 0.1);
+    0 40px 80px rgba(0, 0, 0, 0.5),
+    0 0 60px var(--red-glow);
+}
+
+/* ============================================
+   PULSE GLOW
+   ============================================ */
+@keyframes pulseGlow {
+  0%,
+  100% {
+    opacity: 0.04;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.08;
+    transform: scale(1.05);
+  }
+}
+
+.pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* ============================================
+   RPM COUNTER
+   ============================================ */
+.rpm-digit {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================
+   LETTER STAGGER
+   ============================================ */
+.char-reveal {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+/* ============================================
+   SCAN LINE (CRT EFFECT)
+   ============================================ */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  z-index: 10;
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--red);
+  border-radius: 4px;
+}
+
+/* ============================================
+   CATEGORY COLORS
+   ============================================ */
+.cat-jdm {
+  --cat-color: #3b82f6;
+  --cat-bg: rgba(59, 130, 246, 0.08);
+}
+.cat-supercar {
+  --cat-color: #e63946;
+  --cat-bg: rgba(230, 57, 70, 0.08);
+}
+.cat-classic {
+  --cat-color: #f59e0b;
+  --cat-bg: rgba(245, 158, 11, 0.08);
+}
+
+/* ============================================
+   NOISE TEXTURE OVERLAY
+   ============================================ */
+.noise-bg {
+  position: relative;
+}
+
+.noise-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.02;
+  pointer-events: none;
+  z-index: 1;
 }
