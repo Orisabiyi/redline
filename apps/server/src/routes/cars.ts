@@ -1,6 +1,7 @@
 // src/routes/cars.ts
 import { Hono } from "hono";
 import { prisma } from "../lib/db";
+import { Category } from "../../generated/prisma/enums";
 
 const app = new Hono();
 
@@ -9,7 +10,10 @@ app.get("/", async (context) => {
   try {
     const { category, page = "1", limit = "20" } = context.req.query();
 
-    const where = category ? { category } : {};
+    const where =
+      category && Object.values(Category).includes(category as Category)
+        ? { category: category as Category }
+        : {};
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const [cars, total] = await Promise.all([

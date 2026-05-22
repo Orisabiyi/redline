@@ -6,3 +6,64 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Car {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  make        String
+  model       String
+  year        Int
+  endYear     Int?
+  category    Category
+  
+  // Specs
+  engine        String
+  displacement  Float?
+  horsepower    Int?
+  torque        Int?
+  transmission  String?
+  drivetrain    String?
+  weight        Int?
+  zeroToSixty   Float?
+  topSpeed      Int?
+  unitsProduced Int?
+  
+  // Editorial
+  tagline     String?
+  story       String?   @db.Text
+  funFacts    String[]
+  
+  // Relations
+  images      Image[]
+  variants    Variant[]
+  tags        String[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Image {
+  id          String  @id @default(cuid())
+  carId       String
+  car         Car     @relation(fields: [carId], references: [id])
+  url         String
+  source      String
+  attribution String?
+  isPrimary   Boolean @default(false)
+}
+
+model Variant {
+  id          String  @id @default(cuid())
+  carId       String
+  car         Car     @relation(fields: [carId], references: [id])
+  name        String
+  horsepower  Int?
+  notes       String?
+}
+
+enum Category {
+  JDM
+  SUPERCAR
+  CLASSIC
+}
