@@ -9,7 +9,6 @@ import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Car images — replace with your own or use Unsplash
 const images = [
   {
     src: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=80",
