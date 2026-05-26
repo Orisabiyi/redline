@@ -262,7 +262,6 @@ export default function Hero() {
             </div>
           ))}
 
-          {/* Giant text */}
           <div className="relative z-[3] flex flex-col items-center gap-0">
             {words.map((word, i) => (
               <h1
