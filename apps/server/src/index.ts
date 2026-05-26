@@ -32,6 +32,6 @@ app.route("/cars", carRoutes);
 app.route("/spotlights", spotlightRoutes);
 
 
-app.get("/health", (context) => context.json({ status: "ok", version: "1.0.0" }));
+app.get("/health", (context) => context.json({ status: "ok", app: 'revv', version: "1.0.0" }));
 
 export default app;
