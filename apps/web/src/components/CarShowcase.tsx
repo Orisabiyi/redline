@@ -57,10 +57,15 @@ export default function CarShowcase() {
   const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("https://redline-api.orisabiyidavid.workers.dev/api/v1/cars")
-      .then((res) => res.json())
-      .then((data) => setCars(data.cars || []))
-      .catch(console.error);
+    (async function () {
+      try {
+        const res = await fetch("https://redline-api.orisabiyidavid.workers.dev/api/v1/cars");
+        const data = await res.json();
+        setCars(data.cars || []);
+      } catch (error) {
+        console.error("Failed to fetch cars:", error);
+      }
+    })()
   }, []);
 
   useEffect(() => {
