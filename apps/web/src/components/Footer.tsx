@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="border-t border-neutral-800/50 py-16 px-6 md:px-12">
@@ -12,43 +14,43 @@ export default function Footer() {
               <div className="absolute inset-0 w-3 h-3 rounded-full bg-[#e63946] animate-ping opacity-20" />
             </div>
             <span className="font-display text-2xl tracking-wider">
-              REDLINE
+              REVV
             </span>
           </div>
 
           {/* Links */}
           <div className="flex flex-wrap gap-8 text-sm text-neutral-500">
-            <a
+            <Link
               href="https://github.com/orisabiyi/redline"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white transition-colors duration-300 uppercase tracking-wider text-xs"
             >
               GitHub
-            </a>
-            <a
+            </Link>
+            <Link
               href="https://twitter.com/DevOrisabiyi"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white transition-colors duration-300 uppercase tracking-wider text-xs"
             >
               Twitter / X
-            </a>
-            <a
+            </Link>
+            <Link
               href="https://commonchronicles.live"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white transition-colors duration-300 uppercase tracking-wider text-xs"
             >
               Common Chronicles
-            </a>
+            </Link>
           </div>
         </div>
 
         {/* Bottom */}
         <div className="mt-12 pt-8 border-t border-neutral-900 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-[11px] text-neutral-700 tracking-wider uppercase">
-            © {new Date().getFullYear()} Redline. Free &amp; open source.
+            © {new Date().getFullYear()} Revv. Free &amp; open source.
           </p>
           <p className="text-[11px] text-neutral-800 tracking-wider">
             Built with obsession in Lagos 🇳🇬

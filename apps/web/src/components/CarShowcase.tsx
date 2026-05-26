@@ -59,7 +59,7 @@ export default function CarShowcase() {
   useEffect(() => {
     (async function () {
       try {
-        const res = await fetch("https://redline-api.orisabiyidavid.workers.dev/api/v1/cars");
+        const res = await fetch("https://revv-api.orisabiyidavid.workers.dev/api/v1/cars");
         const data = await res.json();
         setCars(data.cars || []);
       } catch (error) {

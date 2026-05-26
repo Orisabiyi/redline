@@ -166,7 +166,7 @@ export default function IntroOverlay({ onComplete }: Props) {
       {/* MAIN CONTENT */}
       <div className="intro-content flex flex-col items-center relative px-4 pointer-events-none">
         <div className="flex overflow-hidden">
-          {"REDLINE".split("").map((char, i) => (
+          {"REVV".split("").map((char, i) => (
             <span key={i} className="intro-char font-display text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-black tracking-tight text-white leading-none opacity-0"
               style={{ textShadow: i === 0 || i === 6 ? "0 0 60px rgba(230,57,70,0.3)" : "none" }}>
               {char}

@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Redline — Every Car Has a Story",
+  title: "Revv: Every Car Has a Story",
   description:
     "The car encyclopedia for enthusiasts. Browse JDM legends, supercars, and classics. Specs, history, variants — all in one app.",
   openGraph: {
-    title: "Redline — Every Car Has a Story",
+    title: "Revv: Every Car Has a Story",
     description:
       "The car encyclopedia for JDM, supercar, and classic car enthusiasts.",
     type: "website",
