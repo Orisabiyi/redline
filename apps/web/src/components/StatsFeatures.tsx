@@ -32,7 +32,7 @@ function AnimatedCounter({
   }, [inView, target, duration]);
 
   return (
-    <span className="rpm-digit font-display text-6xl md:text-8xl tracking-wider">
+    <span className="rpm-digit font-display text-7xl md:text-8xl tracking-wider">
       {value.toLocaleString()}
       <span className="text-[#e63946]">{suffix}</span>
     </span>
@@ -120,9 +120,9 @@ export default function StatsFeatures() {
   );
 
   return (
-    <section ref={sectionRef} className="py-32 px-6 md:px-12 relative noise-bg">
+    <section ref={sectionRef} className="py-32 px-6 md:px-12 relative noise-bg overflow-x-hidden">
       {/* Stats row */}
-      <div className="stats-row max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 mb-32">
+      <div className="stats-row md:max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-32">
         {stats.map((stat) => (
           <div key={stat.label} className="text-center">
             <AnimatedCounter
