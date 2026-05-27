@@ -1,3 +1,6 @@
 name = "revv-web"
 compatibility_date = "2024-12-01"
-compatibility_flags = ["nodejs_compact"]
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+NODE_ENV = "production"
