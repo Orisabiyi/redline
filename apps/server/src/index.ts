@@ -23,7 +23,7 @@ app.use("*", logger());
 app.use(
   "*",
   cors({
-    origin: ["http://localhost:8081", "http://localhost:3000", "https://redline.app"],
+    origin: ["http://localhost:8081", "http://localhost:3000", "https://revv-web.pages.dev/"],
   })
 );
 
