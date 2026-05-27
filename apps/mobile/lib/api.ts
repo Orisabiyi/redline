@@ -2,7 +2,9 @@ import axios from "axios";
 import { Car, Spotlight } from "../types";
 
 const API_URL =
-  __DEV__ ? "http://localhost:5000/api/v1" : "https://api.redline.app/api/v1";
+  __DEV__ ?
+    "http://localhost:5050/api/v1"
+    : "https://revv-api.orisabiyidavid.workers.dev/api/v1";
 
 const client = axios.create({
   baseURL: API_URL,

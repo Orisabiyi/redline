@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "build": "npx @cloudflare/next-on-pages",
+    "vercel-build": "NEXT_PRIVATE_WORKER=1 next build --webpack",
+    "deploy": "pnpm build && npx wrangler pages deploy .vercel/output/static --project-name=revv-web"
   },
   "dependencies": {
+    "@cloudflare/next-on-pages": "^1.13.16",
     "@gsap/react": "^2.1.2",
     "@hookform/resolvers": "^5.4.0",
     "@neondatabase/serverless": "^1.1.0",
