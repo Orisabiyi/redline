@@ -172,7 +172,7 @@ export default function Waitlist() {
         )}
 
         <p className="wl-note text-neutral-700 text-xs mt-6 tracking-wide">
-          No spam. Just a heads up when Redline is ready to roll.
+          No spam. Just a heads up when Revv is ready to roll.
         </p>
       </div>
     </section>
