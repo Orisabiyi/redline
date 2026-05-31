@@ -1,35 +1,40 @@
-import { cars } from "./seed-data.js";
-import { pool, prisma } from "../src/lib/db.js";
+import { cars as seedCars } from "./seed-data.js";
+import { getDb } from "../src/lib/db.js";
+import { cars, variants } from "../src/db/schema.js";
+
+const db = getDb(process.env.DATABASE_URL!);
 
 async function main() {
-  console.log("🏎️  Seeding Redline database...\n");
+  for (const car of seedCars) {
+    const { variants: carVariants, ...carData } = car;
+    const carId = crypto.randomUUID();
 
-  for (const car of cars) {
-    const { variants, ...carData } = car;
+    const now = new Date();
 
-    const created = await prisma.car.upsert({
-      where: { slug: carData.slug },
-      update: carData,
-      create: {
-        ...carData,
-        variants: {
-          create: variants,
-        },
-      },
-    });
+    await db.insert(cars).values({
+      ...carData,
+      id: carId,
+      createdAt: now,
+      updatedAt: now,
+    }).onConflictDoNothing();
 
-    console.log(`  ✓ ${created.name}`);
+    if (carVariants?.length) {
+      await db.insert(variants).values(
+        carVariants.map((variant) => ({
+          ...variant,
+          id: crypto.randomUUID(),
+          carId,
+          createdAt: now,
+          updatedAt: now,
+        }))
+      );
+    }
   }
-
-  console.log(`\n🏁 Seeded ${cars.length} cars`);
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-    await pool.end();
-  });
+main().catch((err) => {
+  console.error("Seeding error:", err);
+  process.exit(1);
+}).finally(() => {
+  process.exit(0);
+});

@@ -10,7 +10,7 @@
     "dev:worker": "wrangler dev",
     "deploy": "wrangler deploy",
     "db:migrate": "npx prisma migrate dev",
-    "db:seed": "npx tsx prisma/seed.ts",
+    "db:seed": "node --env-file=.env --import tsx prisma/seed.ts",
     "db:studio": "npx prisma studio"
   },
   "keywords": [],
@@ -19,6 +19,7 @@
   "dependencies": {
     "@hono/node-server": "^2.0.3",
     "@neondatabase/serverless": "^1.1.0",
+    "@prisma/adapter-pg": "^7.8.0",
     "drizzle-orm": "^0.45.2",
     "hono": "^4.12.21"
   },

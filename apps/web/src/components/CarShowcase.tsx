@@ -231,7 +231,7 @@ export default function CarShowcase() {
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-neutral-800/30">
                   <div className="text-[10px] text-neutral-600 uppercase tracking-wider">
                     {car.drivetrain} •{" "}
-                    {car.unitsProduced.toLocaleString()} built
+                    {car.unitsProduced ? car.unitsProduced.toLocaleString() : "Unknown"} built
                   </div>
                   <div className="text-neutral-700 text-xs">
                     #{String(i + 1).padStart(2, "0")}
